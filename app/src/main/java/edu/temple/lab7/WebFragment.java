@@ -15,6 +15,7 @@ public class WebFragment extends Fragment{
 
     //public field
     public WebView myWebView;
+    private String theURL;
 
     public WebFragment(){
         //required empty public constructor
@@ -44,11 +45,18 @@ public class WebFragment extends Fragment{
         // Force links and redirects to open in the WebView instead of in a browser
         myWebView.setWebViewClient(new WebViewClient());
 
+        //if user pressed back or forward tab button load the current url
+        if(theURL != null){
+            myWebView.loadUrl(theURL);
+        }
+
         return v;
     }
 
     //public method to allow url to passed from url box to web fragment
     public void setURL(String url){
-        myWebView.loadUrl(url);
+        theURL = url;
+        myWebView.loadUrl(theURL);
     }
+
 }

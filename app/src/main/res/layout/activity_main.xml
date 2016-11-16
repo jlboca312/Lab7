@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context="edu.temple.lab7.MainActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/myToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:layout_alignParentEnd="true" />
+
+    <EditText
+        android:layout_width="500dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/URLBox"
+        android:hint="Enter a URL..."
+        android:layout_below="@+id/myToolbar"
+        android:layout_alignStart="@+id/myToolbar"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="20dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GO"
+        android:id="@+id/goButton"
+        android:layout_below="@+id/URLBox"
+        android:layout_centerHorizontal="true" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/goButton"
+        android:id="@+id/webViewFrag">
+    </FrameLayout>
+
+
+</RelativeLayout>

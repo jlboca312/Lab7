@@ -2,7 +2,8 @@ package edu.temple.lab7;
 
 import android.app.FragmentManager;
 import android.net.Uri;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
+//import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -21,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
     //global variables
     WebFragment webFrag;
     ArrayList<WebFragment> fragments; //array to hold all the fragments
+    EditText urlBox;
+    Button goButton;
     int currentFragIndex; //variable to keep track of index of webFragment array
     FragmentManager fm; //frag manager
 
@@ -28,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         //initialize fragment array
         fragments  = new ArrayList<>();
@@ -42,10 +46,10 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar); //puts the app bar at the top
 
         //give variables and references to the url text box and button
-        final EditText urlBox = (EditText) findViewById(R.id.URLBox);
-        Button goButton = (Button) findViewById(R.id.goButton);
+        urlBox = (EditText) findViewById(R.id.URLBox);
+        goButton = (Button) findViewById(R.id.goButton);
 
-        //if there is a link do the implicit intent stuff
+       //if there is a link do the implicit intent stuff
         Uri data = getIntent().getData();
 
         if(data != null){
@@ -72,14 +76,16 @@ public class MainActivity extends AppCompatActivity {
                     webFrag.setURL("https://" + strURL);
                 }
 
-
             }
         });
+
 
         //add to the fragment array
         fragments.add(webFrag);
 
+        //initialize current index of fragment array
         currentFragIndex = fragments.size() - 1;
+
 
         //load the webfragment
         fm.beginTransaction().add(R.id.webViewFrag, fragments.get(currentFragIndex)).commit();
@@ -99,25 +105,37 @@ public class MainActivity extends AppCompatActivity {
     //deals with clicking the buttons on the app bar
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
+        Fragment oldFrag;
+        final WebFragment newWebFrag;
+        fm = getFragmentManager();
+
+        //clear the url text box
+        urlBox.setText("");
+
         switch(item.getItemId()){
             case R.id.addButton:
                 //if user chose the add button
                 Toast.makeText(this, "Created a new tab", Toast.LENGTH_SHORT).show();
 
-                //initialize current index of frag array
-                currentFragIndex = fragments.size() - 1;
+
+                //remove current fragment from view
+                oldFrag = fm.findFragmentById(R.id.webViewFrag);
+                fm.beginTransaction().remove(oldFrag).commit();
 
                 //make new WebFragment instance
-                final WebFragment newWebFrag = new WebFragment();
+                newWebFrag = new WebFragment();
 
                 //give variables and references to the url text box and button
-                final EditText urlBox = (EditText) findViewById(R.id.URLBox);
-                Button goButton = (Button) findViewById(R.id.goButton);
+                urlBox = (EditText) findViewById(R.id.URLBox);
+                goButton = (Button) findViewById(R.id.goButton);
+
+
 
                 //set the go button action
                 goButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
                         //get the string url from the url text box
                         final String strURL = urlBox.getText().toString();
 
@@ -137,9 +155,10 @@ public class MainActivity extends AppCompatActivity {
                 fragments.add(newWebFrag);
                 currentFragIndex++; //increment index counter
 
+
                 //load the webfragment
-                fm.beginTransaction().replace(R.id.webViewFrag, fragments.get(currentFragIndex)).commit();
-                fm.executePendingTransactions();
+                fm.beginTransaction().add(R.id.webViewFrag, fragments.get(currentFragIndex)).commit();
+                //fm.executePendingTransactions();
 
 
                 return true;
@@ -152,13 +171,14 @@ public class MainActivity extends AppCompatActivity {
                 //check if not last index
                 if(currentFragIndex > 0){
                     currentFragIndex--; //decrement index
-                    fm.beginTransaction().add(R.id.webViewFrag, fragments.get(currentFragIndex)).commit();
-                    //fm.executePendingTransactions();
 
-                    //Toast.makeText(this, "Switching to the left tab, index:"+currentFragIndex, Toast.LENGTH_SHORT).show();
+                    //load the previous fragment
+                    fm.beginTransaction().replace(R.id.webViewFrag, fragments.get(currentFragIndex)).commit();
+                    fm.executePendingTransactions();
 
+                }else{
+                    Toast.makeText(this, "There are no more tabs to the left", Toast.LENGTH_SHORT).show();
                 }
-
 
 
                 return true;
@@ -166,6 +186,20 @@ public class MainActivity extends AppCompatActivity {
             case R.id.rightButton:
                 //if user clicked the right arrow button
                 Toast.makeText(this, "Switching to the right tab", Toast.LENGTH_SHORT).show();
+
+
+                //check if not last index
+                if(currentFragIndex < fragments.size() - 1){
+                    currentFragIndex++; //decrement index
+
+                    //load the previous fragment
+                    fm.beginTransaction().replace(R.id.webViewFrag, fragments.get(currentFragIndex)).commit();
+                    fm.executePendingTransactions();
+
+                }else{
+                    Toast.makeText(this, "There are no more tabs to the right", Toast.LENGTH_SHORT).show();
+                }
+
                 return true;
         }
 
